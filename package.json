@@ -1,0 +1,18 @@
+{
+  "name": "ruang-fmipa-unpad",
+  "version": "1.0.0",
+  "description": "Pemantauan penggunaan ruang FMIPA Unpad",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "three": "^0.170.0"
+  },
+  "devDependencies": {
+    "vite": "^5.4.21"
+  },
+  "private": true,
+  "type": "module"
+}
