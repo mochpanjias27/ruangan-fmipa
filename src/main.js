@@ -7,6 +7,7 @@ const SESI = [[1, 450, 500], [2, 500, 550], [3, 550, 600], [4, 615, 665], [5, 66
 const KULIAH = 'Kuliah/praktikum', ADMIN = 'Administratif (TA/Magang/KKN)';
 const JENIS = ['Kelas Teori', 'Laboratorium', 'Ruang Seminar', 'Sidang', 'Ruang Pertemuan / Aula', 'Ruang Tutorial', 'Ruang Diskusi'];
 const KAMPUS = ['Jatinangor', 'Bandung (Singaperbangsa/Dipati Ukur)'];
+const DEFAULT_JENIS = 'Kelas Teori', DEFAULT_KAMPUS = 'Jatinangor'; // bawaan pencarian ruang kosong
 
 const $ = (s, r = document) => r.querySelector(s);
 const el = (tag, cls, text) => { const e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; };
@@ -252,16 +253,14 @@ async function start() {
   const now = nowSlot();
   const state = {
     heat: 'Semua ruang ajar',
-    f: { hari: now.hari, sesi: now.sesi, jenis: '', kampus: '', cap: 0, adm: false },
+    f: { hari: now.hari, sesi: now.sesi, jenis: DEFAULT_JENIS, kampus: DEFAULT_KAMPUS, cap: 0, adm: false },
     g: { hari: now.hari, jenis: 'Kelas Teori', gedung: '' },
     u: { q: '', jenis: '', kampus: '' },
   };
 
   // hero: status langsung
-  const liveFree = freeRooms(jadwal, c.ajar, { ...state.f, jenis: '' }).length;
-  $('#live-text').textContent = now.live
-    ? `Sekarang ${now.hari}, sesi ${now.sesi}: ${liveFree} ruang ajar kosong`
-    : `Sesi berikutnya ${now.hari}, sesi ${now.sesi}: ${liveFree} ruang ajar kosong`;
+  const liveFree = freeRooms(jadwal, c.ajar, state.f).length;
+  $('#live-text').textContent = `${now.live ? 'Sekarang' : 'Sesi berikutnya'} ${now.hari}, sesi ${now.sesi}: ${liveFree} kelas teori kosong di Jatinangor`;
 
   renderKpis(c.k);
   renderHeat(c.heat, state.heat);
@@ -278,8 +277,8 @@ async function start() {
   const F = $('#f');
   fill(F.hari, HARI.map((h) => [h, h]), state.f.hari);
   fill(F.sesi, SESI.map((s) => [String(s[0]), sesiLabel(s)]), String(state.f.sesi));
-  fill(F.jenis, [['', 'Semua ruang ajar'], ...JENIS.map((j) => [j, j])], '');
-  fill(F.kampus, [['', 'Semua kampus'], ...KAMPUS.map((k) => [k, k])], '');
+  fill(F.jenis, [['', 'Semua ruang ajar'], ...JENIS.map((j) => [j, j])], DEFAULT_JENIS);
+  fill(F.kampus, [['', 'Semua kampus'], ...KAMPUS.map((k) => [k, k])], DEFAULT_KAMPUS);
   const readF = () => { state.showAll = false; state.f = { hari: F.hari.value, sesi: Number(F.sesi.value), jenis: F.jenis.value, kampus: F.kampus.value, cap: Number(F.cap.value) || 0, adm: F.adm.checked }; renderFree(state, data); };
   F.addEventListener('input', readF); F.addEventListener('change', readF);
   F.addEventListener('submit', (e) => e.preventDefault());

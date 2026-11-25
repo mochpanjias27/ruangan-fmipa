@@ -196,8 +196,14 @@ export function mountClassroom(canvas, opts = {}) {
   const floor = new THREE.Mesh(new THREE.BoxGeometry(W, 0.06, D), mat(C.wood, { map: floorTex, roughness: 0.65 }));
   floor.position.set(W / 2, -0.03, D / 2); floor.receiveShadow = true;
   room.add(floor);
-  room.add(box(W + T, 0.45, D + T, C.green, W / 2 + T / 2 - T / 2, -0.51, D / 2 - T / 2, { cast: false }));
-  room.add(box(W + T + 0.02, 0.06, D + T + 0.02, C.gold, W / 2, -0.12, D / 2 - T / 2, { cast: false }));
+  // alas hijau + list emas: tanpa permukaan yang berimpit (penyebab kelap-kelip/z-fighting)
+  // dan tidak menerima bayangan (sisi tegak yang hampir sejajar sinar matahari memicu shadow acne)
+  const slab = box(W + T + 0.3, 0.44, D + T + 0.3, C.green, (W + T) / 2 - 0.15 + 0.15, -0.5, (D - T) / 2 + 0.15 - 0.15, { cast: false });
+  slab.receiveShadow = false;
+  room.add(slab);
+  const band = box(W + T + 0.42, 0.1, D + T + 0.42, C.gold, (W + T) / 2, -0.2, (D - T) / 2, { cast: false });
+  band.receiveShadow = false;
+  room.add(band);
 
   // dinding belakang (z = 0)
   room.add(box(W + T, H, T, C.wallBack, W / 2 + T / 2, 0, -T / 2));
